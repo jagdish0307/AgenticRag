@@ -1,0 +1,44 @@
+{
+    "header": {
+        "type": "esearch",
+        "version": "0.3"
+    },
+    "esearchresult": {
+        "count": "2966008",
+        "retmax": "20",
+        "retstart": "0",
+        "idlist": [
+            "40072500",
+            "40072471",
+            "40072456",
+            "40072452",
+            "40072448",
+            "40072437",
+            "40072432",
+            "40072398",
+            "40072351",
+            "40072332",
+            "40072304",
+            "40072283",
+            "40072281",
+            "40072274",
+            "40072251",
+            "40072110",
+            "40072099",
+            "40072095",
+            "40072093",
+            "40072091"
+        ],
+        "translationset": [
+            {
+                "from": "cancer",
+                "to": "\"cancer's\"[All Fields] OR \"cancerated\"[All Fields] OR \"canceration\"[All Fields] OR \"cancerization\"[All Fields] OR \"cancerized\"[All Fields] OR \"cancerous\"[All Fields] OR \"neoplasms\"[MeSH Terms] OR \"neoplasms\"[All Fields] OR \"cancer\"[All Fields] OR \"cancers\"[All Fields]"
+            },
+            {
+                "from": "treatment",
+                "to": "\"therapeutics\"[MeSH Terms] OR \"therapeutics\"[All Fields] OR \"treatments\"[All Fields] OR \"therapy\"[Subheading] OR \"therapy\"[All Fields] OR \"treatment\"[All Fields] OR \"treatment's\"[All Fields]"
+            }
+        ],
+        "querytranslation": "(\"cancer s\"[All Fields] OR \"cancerated\"[All Fields] OR \"canceration\"[All Fields] OR \"cancerization\"[All Fields] OR \"cancerized\"[All Fields] OR \"cancerous\"[All Fields] OR \"neoplasms\"[MeSH Terms] OR \"neoplasms\"[All Fields] OR \"cancer\"[All Fields] OR \"cancers\"[All Fields]) AND (\"therapeutics\"[MeSH Terms] OR \"therapeutics\"[All Fields] OR \"treatments\"[All Fields] OR \"therapy\"[MeSH Subheading] OR \"therapy\"[All Fields] OR \"treatment\"[All Fields] OR \"treatment s\"[All Fields])"
+    }
+}

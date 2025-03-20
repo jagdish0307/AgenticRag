@@ -1,0 +1,31 @@
+# CSV-Based Queries
+What is the blood type of Bobby Jackson?
+Give me the age of James Patterson?
+Which hospital is Maria Gonzalez admitted to?
+Who is treating David Smith?
+What is the billing amount for Olivia Johnson?
+
+# FAISS-Based Queries
+Tell me about common treatments for lung cancer.
+What are the latest advancements in diabetes research?
+How do you manage high blood pressure naturally?
+Explain the symptoms of Alzheimer's disease.
+What are the side effects of chemotherapy?
+
+# API-Based Queries (PubMed & ClinicalTrials)
+What are the latest clinical trials for Parkinson’s disease?
+Find recent research papers on AI in healthcare.
+Tell me about the newest treatments for heart disease.
+Give me recent medical studies on obesity.
+What are the latest findings on gene therapy?
+
+# Multi-Step Queries (Agent Reasoning)
+Who is the doctor treating John Doe, and what is his blood type?
+What are the symptoms of lung cancer, and are there any ongoing clinical trials?
+Tell me about a new medication for diabetes and find related clinical trials.
+Summarize the latest research on Alzheimer's and list possible treatments.
+
+# Complex Queries (Agent Decision-Making)
+Find me a patient Name mIchElLe daniELs and tell me her Medical Condition.
+Are there any recent research papers on COVID-19 variants?
+How does chemotherapy work?

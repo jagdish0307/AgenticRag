@@ -1,0 +1,47 @@
+# Core Libraries
+langchain
+langchain_community
+langchain_huggingface
+langgraph
+langserve
+pandas
+numpy
+langchain_ollama
+pandasai
+openai
+
+# Vector Database & Retrieval
+elasticsearch
+faiss-cpu
+
+# LLMs & Hugging Face Integration
+transformers
+accelerate
+torch
+sentence-transformers
+huggingface_hub
+
+# APIs & Web Scraping
+requests
+beautifulsoup4
+
+# PDF Processing
+pymupdf
+pdfminer.six
+pdfplumber
+pypdf
+pytesseract 
+pdf2image 
+pillow
+pypdf2
+
+# Visualization
+matplotlib
+seaborn
+
+# Deployment
+boto3
+flask
+uvicorn
+
+requests pandas
