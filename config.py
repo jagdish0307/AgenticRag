@@ -4,9 +4,16 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-# Hugging Face API Key (Loaded from .env)
+
+
+# OpenAI API Key
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# Hugging Face API Key
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
 
+# Hugging Face Model Name
+HUGGINGFACE_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 
 # API URLs
