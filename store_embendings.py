@@ -1,48 +1,47 @@
-import faiss
-import pickle
-import numpy as np
-from langchain_community.vectorstores import FAISS
-from langchain_huggingface import HuggingFaceEmbeddings
 import os
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import FAISS
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-# ✅ Load extracted text
-def load_text(filename="data/extracted_text.txt"):
-    with open(filename, "r", encoding="utf-8") as f:
-        return f.read()
+def load_text(file_path):
+    """Load text from a file."""
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"❌ File not found: {file_path}")
+    with open(file_path, "r", encoding="utf-8") as file:
+        return file.read()
 
-# ✅ Split text into chunks
-def chunk_text(text, chunk_size=500, overlap=50):
-    words = text.split()
-    chunks = []
-    for i in range(0, len(words), chunk_size - overlap):
-        chunks.append(" ".join(words[i : i + chunk_size]))
-    return chunks
+def generate_embeddings(docs, model_name="sentence-transformers/all-MiniLM-L6-v2"):
+    """Generate embeddings for the provided documents."""
+    embeddings = HuggingFaceEmbeddings(model_name=model_name)
+    return embeddings, embeddings.embed_documents(docs)
 
-# ✅ Generate embeddings and store in FAISS
-def store_embeddings_in_faiss(chunks, index_name="faiss_index"):
-    embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+def store_embeddings(docs, embeddings, faiss_index_path="faiss_index"):
+    """Store embeddings in a FAISS index."""
+    if os.path.exists(faiss_index_path):
+        print(f"🔄 Loading existing FAISS index from {faiss_index_path}...")
+        faiss_index = FAISS.load_local(faiss_index_path, embeddings)
+    else:
+        print("🆕 Creating a new FAISS index...")
+        faiss_index = FAISS.from_texts(docs, embeddings)
+    faiss_index.save_local(faiss_index_path)
+    print(f"✅ Embeddings stored in FAISS index at {faiss_index_path}")
 
-    # Convert text chunks into embeddings
-    embeddings = np.array([embedding_model.embed_query(chunk) for chunk in chunks]).astype("float32")
+def main():
+    text_file_path = os.path.join("data", "extracted_text.txt")
+    faiss_index_path = os.path.join("data", "faiss_index")
 
-    # Create FAISS index
-    dimension = embeddings.shape[1]  # Get embedding vector size
-    index = faiss.IndexFlatL2(dimension)
-    index.add(embeddings)
+    print("📄 Loading extracted text...")
+    text = load_text(text_file_path)
 
-    # Ensure embeddings folder exists
-    os.makedirs("embeddings", exist_ok=True)
+    print("🔍 Splitting text into chunks...")
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    docs = text_splitter.split_text(text)
 
-    # Save FAISS index
-    faiss.write_index(index, f"embeddings/{index_name}.index")
+    print("⚙️ Generating embeddings...")
+    embeddings, _ = generate_embeddings(docs)
 
-    # Store metadata using pickle
-    with open(f"embeddings/{index_name}.pkl", "wb") as f:
-        pickle.dump(chunks, f)
-
-    print("✅ Embeddings stored in FAISS successfully.")
+    print("💾 Storing embeddings in FAISS index...")
+    store_embeddings(docs, embeddings, faiss_index_path)
 
 if __name__ == "__main__":
-    text = load_text()
-    chunks = chunk_text(text)
-    store_embeddings_in_faiss(chunks)
+    main()

@@ -11,6 +11,8 @@ pandasai
 openai
 groq
 langchain_openai
+xmltodict
+google-search-results
 
 # Vector Database & Retrieval
 elasticsearch
