@@ -9,6 +9,8 @@ numpy
 langchain_ollama
 pandasai
 openai
+groq
+langchain_openai
 
 # Vector Database & Retrieval
 elasticsearch

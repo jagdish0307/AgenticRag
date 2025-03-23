@@ -1,75 +1,84 @@
-
-import json
+import os
+import pickle
+import faiss
+import numpy as np
+from retrieval_tools.api_tool import query_clinical_trials, query_pubmed, query_huggingface_api
 from retrieval_tools.csv_tool import query_csv
-from retrieval_tools.faiss_tool import search_faiss
-from retrieval_tools.api_tool import query_apis
+from retrieval_tools.faiss_tool import search_faiss, load_faiss_index
 
-def retrieve_data(query):
-    """Retrieve data from CSV, FAISS, or APIs based on availability."""
-    print(f"🔍 Searching for: {query}")
+# ✅ FAISS Index Paths
+FAISS_INDEX_PATH = "embeddings/faiss_index.index"
+FAISS_MAPPING_PATH = "embeddings/faiss_index.pkl"
 
-    # 1️⃣ Query CSV
-    try:
-        csv_results = query_csv(query)
-        if csv_results and isinstance(csv_results, (list, dict)) and "error" not in str(csv_results).lower():
-            print("✅ Data found in CSV.")
-            return {
-                "source": "CSV",
-                "confidence": 0.9,
-                "data": csv_results,
-                "source_info": "healthcare_dataset.csv"
-            }
-        else:
-            print("❌ No relevant data found in CSV. Trying FAISS...")
-    except FileNotFoundError:
-        print("⚠️ CSV file not found. Trying FAISS...")
-    except Exception as e:
-        print(f"⚠️ CSV query failed: {e}")
+# ✅ Load FAISS index and mapping
+def load_faiss():
+    """Load FAISS index and document mapping."""
+    if not os.path.exists(FAISS_INDEX_PATH) or not os.path.exists(FAISS_MAPPING_PATH):
+        raise FileNotFoundError("❌ FAISS index or mapping file is missing.")
 
-    # 2️⃣ Query FAISS
-    try:
-        faiss_results = search_faiss(query)
-        if isinstance(faiss_results, tuple) and len(faiss_results) == 2:
-            faiss_data, faiss_score = faiss_results
-            if faiss_data:
-                print("✅ Data found in FAISS.")
-                return {
-                    "source": "FAISS",
-                    "confidence": faiss_score,
-                    "data": faiss_data,
-                    "source_info": "faiss_index"
-                }
-        print("❌ No relevant data found in FAISS. Trying API...")
-    except Exception as e:
-        print(f"⚠️ FAISS query failed: {e}")
+    index = faiss.read_index(FAISS_INDEX_PATH)
+    with open(FAISS_MAPPING_PATH, "rb") as f:
+        mapping = pickle.load(f)
 
-    # 3️⃣ Query APIs
-    try:
-        api_results = query_apis(query)
-        if api_results and isinstance(api_results, (list, dict)) and "error" not in str(api_results).lower():
-            print("✅ Data found in APIs.")
-            return {
-                "source": "API",
-                "confidence": 0.8,
-                "data": api_results,
-                "source_info": "PubMed API / ClinicalTrials API"
-            }
-        else:
-            print("❌ No relevant data found in API sources.")
-    except ConnectionError:
-        print("⚠️ API connection failed.")
-    except Exception as e:
-        print(f"⚠️ API query failed: {e}")
+    return index, mapping
 
-    print("❌ No relevant information found in any source.")
+# ✅ FAISS-based retrieval
+def retrieve_faiss(query, top_k=3):
+    """Retrieve relevant data from FAISS using embeddings."""
+    return search_faiss(query, top_k=top_k)
+
+# ✅ Retrieve clinical trials data
+def retrieve_clinical_trials(query):
+    """Fetch related clinical trial studies."""
+    return query_clinical_trials(query)
+
+# ✅ Retrieve PubMed research data
+def retrieve_pubmed(query):
+    """Fetch PubMed articles relevant to query."""
+    return query_pubmed(query)
+
+# ✅ Retrieve patient records from CSV
+def retrieve_patient_data(query):
+    """Fetch patient record from CSV file."""
+    return query_csv(query)
+
+# ✅ Hugging Face LLM Integration
+def generate_response_with_huggingface(prompt):
+    """Query Hugging Face LLM model for additional insights."""
+    return query_huggingface_api(prompt)
+
+# ✅ Unified retrieval function
+def retrieve_info(query, patient_query=None, use_llm=False):
+    """
+    Retrieve relevant data from FAISS, ClinicalTrials, PubMed, CSV, and optionally LLM.
+    
+    Args:
+    - query (str): The main query string.
+    - patient_query (str, optional): The patient name for CSV retrieval.
+    - use_llm (bool, optional): Whether to use LLM for additional insights.
+    
+    Returns:
+    - dict: Combined results from all sources.
+    """
+    faiss_results = retrieve_faiss(query)
+    clinical_trials = retrieve_clinical_trials(query)
+    pubmed_results = retrieve_pubmed(query)
+    patient_data = retrieve_patient_data(patient_query) if patient_query else "No patient query provided."
+    llm_response = generate_response_with_huggingface(query) if use_llm else "LLM response disabled."
+
     return {
-        "source": "None",
-        "confidence": 0.0,
-        "data": "No relevant information found."
+        "FAISS Results": faiss_results,
+        "Clinical Trials": clinical_trials,
+        "PubMed Articles": pubmed_results,
+        "Patient Data": patient_data,
+        "LLM Response": llm_response,
     }
 
-# Example Query
+# ✅ Test the retrieval pipeline
 if __name__ == "__main__":
-    user_query = "What are the latest clinical trials for Parkinson’s disease?"
-    response = retrieve_data(user_query)
-    print(json.dumps(response, indent=2))
+    test_query = "Latest treatment for diabetes"
+    test_patient_query = "John Doe"
+    
+    results = retrieve_info(test_query, test_patient_query, use_llm=True)
+    for key, value in results.items():
+        print(f"\n{key}: {value}")
