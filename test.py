@@ -1,25 +1,22 @@
-# import requests
-# import os
-# from dotenv import load_dotenv
 
-# load_dotenv()
-# API_KEY = os.getenv("HUGGINGFACE_API_KEY")
+from agent import agent_executor
+from agent import refine_response_with_gemma
 
-# headers = {"Authorization": f"Bearer {API_KEY}"}
-# response = requests.get("https://huggingface.co/api/whoami-v2", headers=headers)
 
-# if response.status_code == 200:
-#     print("✅ API Key is valid! User Info:", response.json())
-# else:
-#     print(f"❌ API Key Error! Status Code: {response.status_code}, Response: {response.text}")
+# ✅ Query the Agent
+while True:
+    query = input("\n🩺 Enter your healthcare query (or type 'exit' to quit): ")
+    if query.lower() == "exit":
+        print("\n👋 Exiting... Stay healthy!")
+        break
+    
+    # ✅ Query the Agent
+    raw_response = agent_executor.invoke({"input": query})
+    
+    # ✅ Format the Response Using Gemma 2B
+    detailed_response = refine_response_with_gemma(raw_response["output"])
+    
+    print("\n🔹 Easy-to-Read Healthcare Info:\n", detailed_response)
 
-from langchain_community.tools import PubmedQueryRun
 
-# Create a PubMed tool
-pubmed_tool = PubmedQueryRun()
 
-# Example: Fetch latest articles on Parkinson’s disease
-query = "Parkinson's disease latest research"
-response = pubmed_tool.run(query)
-
-print(response)  # Returns full research articles instead of just IDs

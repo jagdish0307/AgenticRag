@@ -1,0 +1,23 @@
+1. What are the key ethical challenges in public health research compared to biomedical research?
+   - Community and Population Focus: Unlike biomedical research, which focuses on individual patients, public health research often deals with entire communities and populations. This raises ethical concerns about collective risks and benefits.
+   - Consent Complexity: Ethical challenges arise in gaining informed consent, as public health research often involves interventions at a community level rather than individual decision-making.
+   - Broader Socioeconomic Context: Public health research must consider social, political, and economic factors, which may introduce additional ethical dilemmas.
+   - Ethical Oversight: Traditional biomedical research ethics frameworks may not fully capture the unique challenges of public health interventions.
+
+2. Why is distinguishing between public health research and public health practice important?
+   - Research: Focuses on generating generalizable knowledge that benefits people beyond the immediate participants. It often requires ethical approval and strict regulations.
+   - Practice: Aims to prevent or control disease and improve health programs. It focuses on directly benefiting participants rather than producing broader scientific knowledge.
+   - Blurred Boundaries: Some activities, like public health surveillance, can involve both research and practice, making ethical oversight challenging.
+   - Regulatory Implications: In some jurisdictions (e.g., the United States), legal requirements dictate whether an activity is classified as research or practice, impacting ethical review processes.
+
+3. What are the limitations of current ethical guidelines for public health research?
+   - Individual-Centric Focus: These guidelines were designed mainly for clinical/biomedical research, emphasizing individual autonomy rather than community-wide interventions.
+   - Rigid Regulatory Approach: Overreliance on strict compliance can discourage ethical reflection, leading to a checklist-based approach rather than true moral judgment.
+   - Randomized Controlled Trials (RCTs) Bias: Many guidelines assume RCTs as the gold standard, ignoring that public health research often uses alternative methods (e.g., cluster trials) that present different ethical concerns.
+   - Underrepresentation of Community Perspectives: Existing regulations often fail to capture community-based ethical values, leading to ethical blind spots in population-level studies.
+
+4. How can ethical oversight in public health research be improved?
+   - Risk-Based Review: Instead of rigidly categorizing research vs. practice, ethical oversight should focus on the level of risk posed to participants.
+   - Community Engagement: Ethical frameworks should actively involve communities in decision-making, ensuring that research benefits both individuals and populations.
+   - Training for Review Committees: Ethics review board members should receive formal training in public health ethics, not just biomedical research ethics.
+   - Adaptability of Guidelines: Ethical guidelines should be flexible, allowing for context-specific ethical judgments rather than enforcing strict rules that may not fit public health research scenarios.

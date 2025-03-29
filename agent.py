@@ -1,83 +1,127 @@
-# import sys
-# from retrieval import retrieve_info
+import os
+from langchain.tools import Tool
+from langchain_community.utilities import WikipediaAPIWrapper
+from langchain_community.tools.arxiv.tool import ArxivQueryRun
+from retrieval_tools.csv_tool import HealthcareCSVHandler
+from retrieval_tools.serpapi_tool import search_health_info
+from retrieval_tools.pdf_tool import search_pdf
+from langchain_openai import ChatOpenAI
+from langchain.agents import initialize_agent
 
-# def main():
-#     print("🤖 Healthcare Agent Initialized!")
-#     print("Type your query or type 'exit' to quit.\n")
+# ✅ Load API Key Securely
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-#     while True:
-#         # Get user input
-#         user_query = input("📝 Enter your query: ").strip()
-#         if user_query.lower() == "exit":
-#             print("👋 Exiting Healthcare Agent. Have a great day!")
-#             sys.exit()
+# ✅ Define Tools
+wiki = Tool(
+    name="Wikipedia",
+    func=WikipediaAPIWrapper().run,
+    description="Search Wikipedia for general healthcare topics."
+)
 
-#         # Ask if patient-related info is needed
-#         patient_query = input("🔍 Do you need patient records? (Enter patient name or press Enter to skip): ").strip()
-#         use_llm = input("💡 Would you like an AI-generated response? (yes/no): ").strip().lower() == "yes"
+arxiv = Tool(
+    name="Arxiv",
+    func=ArxivQueryRun().run,
+    description="Fetch academic research papers related to healthcare from Arxiv."
+)
 
-#         # Retrieve information
-#         results = retrieve_info(user_query, patient_query if patient_query else None, use_llm=use_llm)
+csv_handler = HealthcareCSVHandler()
+patient_info_tool = Tool(
+    name="Patient Records",
+    func=csv_handler.query_csv,
+    description="Retrieve patient medical history from structured CSV records."
+)
 
-#         # Display results
-#         print("\n📌 **Results:**")
-#         for key, value in results.items():
-#             print(f"\n🔹 {key}: {value}")
+serpapi_tool = Tool(
+    name="Real-Time Healthcare Search",
+    func=search_health_info,
+    description="Fetch the latest healthcare updates and research from the web."
+)
 
-# if __name__ == "__main__":
-#     main()
+pdf_faiss_tool = Tool(
+    name="Healthcare PDF Search",
+    func=search_pdf,
+    description="Retrieve information from FAISS-indexed healthcare research PDFs."
+)
+
+# ✅ List of Tools
+tools = [wiki, arxiv, patient_info_tool, serpapi_tool, pdf_faiss_tool]
+
+# ✅ Initialize LLM
+llm = ChatOpenAI(
+    model="gemma2-9b-it",
+    temperature=1,
+    openai_api_key=GROQ_API_KEY,
+    openai_api_base="https://api.groq.com/openai/v1"
+)
+
+# ✅ Initialize Agent
+# ✅ Create the Agent with error handling
+agent_executor = initialize_agent(
+    tools=tools,
+    llm=llm,
+    agent="zero-shot-react-description",
+    verbose=True,
+    handle_parsing_errors=True  # ✅ Fix output parsing issues
+)
 
 
-import sys
-from retrieval import retrieve_info
+print("✅ Healthcare AI Chatbot is ready!")
 
-def format_response(results):
-    """Formats results in a simple, chat-like format."""
-    response = ""
+# ✅ Optimized Prompt for Structured Healthcare Responses
+def refine_response_with_gemma(text):
+    """Formats healthcare responses clearly and concisely using Groq (Gemma 2B)."""
+    prompt = f"""
+    You are a **highly knowledgeable and professional Healthcare AI Assistant**.
+    Your goal is to provide **clear, structured, and easy-to-read healthcare responses**.
+
+    ### **Response Guidelines:**
+    - **Keep it concise** (avoid unnecessary details and medical jargon).
+    - **Use bullet points** for clarity and easy reading.
+    - **Cite sources when needed** (e.g., Wikipedia, Arxiv, clinical trials).
+
+    ### **Response Formats:**
+    **1️⃣ General Health Questions:**
+    ✔ **Condition:** [Short explanation]
+    ✔ **Symptoms:** [Common symptoms]
+    ✔ **Treatment:** [Recommended medical treatments]
+    ✔ **Prevention:** [Preventive measures]
+    📢 *Consult a doctor for diagnosis and treatment.*
+
+    **2️⃣ Clinical Trial Results:**
+    - **Trial Name:** [Name]
+    - **Purpose:** [What is being tested?]
+    - **Phase:** [1, 2, 3, or 4]
+    - **Eligibility:** [Who can join?]
+    - **Enrollment Status:** [Open or Closed]
+    - **Source:** [Website link]
+
+    **3️⃣ Research Paper Summary:**
+    - **Title:** [Paper Title]
+    - **Published On:** [Date]
+    - **Authors:** [Main Authors]
+    - **Summary:** [Short, easy-to-understand explanation]
+    - **Source:** [Arxiv / PubMed Link]
+
+    **4️⃣ Patient Records (CSV Data):**
+    - **Patient Name:** [Name]
+    - **Age:** [Age]
+    - **Diagnosis:** [Condition]
+    - **Last Visit:** [Date]
+    - **Prescribed Medications:** [List of meds]
+    📌 *For detailed history, refer to hospital records.*
+
+    **5️⃣ PDF FAISS Retrieval (Medical Research PDFs):**
+    - **Key Finding:** [Main insight from the PDF]
+    - **Relevance:** [How it applies to the user's query]
+    - **Source:** [PDF file reference]
+
+    ### **Now, format the following response properly:**
+    {text}
+    """
     
-    if results.get("LLM Response") and results["LLM Response"] != "LLM response disabled.":
-        return results["LLM Response"]["response"]
-    
-    if results.get("Patient Data") and isinstance(results["Patient Data"], list):
-        response += "\n📌 Patient Records:\n"
-        for record in results["Patient Data"]:
-            response += f"🔹 {record['name']} - Blood Type: {record['blood_type']}, Condition: {record['medical_condition']}, Doctor: {record['doctor']}, Hospital: {record['hospital']}\n"
-        return response.strip()
-    
-    if results.get("FAISS Results") and results["FAISS Results"]:
-        response += "\n📌 Hospital Policies:\n"
-        response += "\n".join(results["FAISS Results"])
-        return response.strip()
-    
-    if results.get("Clinical Trials") and results["Clinical Trials"].get("studies"):
-        response += "\n📌 Latest Clinical Trials:\n"
-        response += "\n".join(str(study) for study in results["Clinical Trials"]["studies"])
-        return response.strip()
-    
-    if results.get("PubMed Articles") and results["PubMed Articles"]["esearchresult"]["idlist"]:
-        response += "\n📌 Research Articles:\n"
-        response += "\n".join(results["PubMed Articles"]["esearchresult"]["idlist"])
-        return response.strip()
-    
-    return "❌ No relevant information found. Please try another query."
+    response = llm.invoke(prompt)
+    return response.content
 
-def main():
-    print("🤖 Healthcare Agent Initialized!")
-    print("Type your query or type 'exit' to quit.\n")
 
-    while True:
-        user_query = input("📝 Enter your query: ").strip()
-        if user_query.lower() == "exit":
-            print("👋 Exiting Healthcare Agent. Have a great day!")
-            sys.exit()
 
-        patient_query = input("🔍 Do you need patient records? (Enter patient name or press Enter to skip): ").strip()
-        use_llm = input("💡 Would you like an AI-generated response? (yes/no): ").strip().lower() == "yes"
 
-        results = retrieve_info(user_query, patient_query if patient_query else None, use_llm=use_llm)
-        response = format_response(results)
-        
-        print("\n" + response + "\n")
-
-if __name__ == "__main__":
-    main()

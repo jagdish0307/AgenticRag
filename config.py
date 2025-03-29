@@ -15,6 +15,11 @@ HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
 # Hugging Face Model Name
 HUGGINGFACE_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
+# SerpAPI Key
+SERPAPI_API_KEY = os.getenv("SERPAPI_API_KEY")
+
+# GroqAPI Key
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # API URLs
 PUBMED_API_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"

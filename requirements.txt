@@ -1,4 +1,3 @@
-# Core Libraries
 langchain
 langchain_community
 langchain_huggingface
@@ -13,23 +12,18 @@ groq
 langchain_openai
 xmltodict
 google-search-results
-
-# Vector Database & Retrieval
+pytest
+arxiv
+wikipedia
 elasticsearch
 faiss-cpu
-
-# LLMs & Hugging Face Integration
 transformers
 accelerate
 torch
 sentence-transformers
 huggingface_hub
-
-# APIs & Web Scraping
 requests
 beautifulsoup4
-
-# PDF Processing
 pymupdf
 pdfminer.six
 pdfplumber
@@ -38,14 +32,11 @@ pytesseract
 pdf2image 
 pillow
 pypdf2
-
-# Visualization
 matplotlib
 seaborn
-
-# Deployment
+tabulate
 boto3
 flask
 uvicorn
-
-requests pandas
+requests
+pandas
