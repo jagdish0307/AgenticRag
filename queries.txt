@@ -64,5 +64,3 @@
 
 6. Find all patients diagnosed with cancer.
    **Response:** Cancer patients include Bobby Jackson, Adrienne Bell, Christina Martinez, and others.
-
-Let me know if you need any modifications or additional queries!
