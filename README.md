@@ -99,10 +99,8 @@ DEFAULT_PDF_PATH = "data/medical_papers.pdf"
 - **Expand multi-modal capabilities (X-ray, MRI image analysis)**
 - **Enhance response summarization with more advanced AI models**
 
-## License
-This project is licensed under the **MIT License**.
+
 
 ---
 
-🔥 *Developed with cutting-edge AI for intelligent healthcare solutions!* 🚀
 
